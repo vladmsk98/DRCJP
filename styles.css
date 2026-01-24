@@ -11,6 +11,26 @@
   --list-item-bg: white; /* Фон элемента списка */
   --list-item-hover: #f0f0f0; /* Цвет при наведении */
   --highlight-color: #ffff99; /* Цвет выделения */
+  --clear-button-bg: #f8f8f8; /* Фон кнопки очистки */
+  --clear-button-hover: #e0e0e0; /* Цвет при наведении кнопки очистки */
+  --tag-bg: #e0e0e0; /* Фон тега */
+  --tag-text: black; /* Цвет текста тега */
+  --tag-border: #ccc; /* Граница тега */
+  --favorite-btn-bg: #fff3cd; /* Фон кнопки избранного */
+  --favorite-btn-hover: #ffeaa7; /* Цвет при наведении кнопки избранного */
+  --favorite-btn-active: #fd79a8; /* Цвет активной кнопки избранного */
+  --info-bg: #f8f9fa; /* Фон информации о файле */
+  --info-text: #495057; /* Цвет текста информации */
+  --share-btn-bg: #d1ecf1; /* Фон кнопки поделиться */
+  --share-btn-hover: #bee5eb; /* Цвет при наведении кнопки поделиться */
+  --tag-filter-bg: #f8f9fa; /* Фон фильтра по тегам */
+  --tag-filter-border: #dee2e6; /* Граница фильтра по тегам */
+  --modal-bg: rgba(0, 0, 0, 0.9); /* Фон модального окна */
+  --modal-text: white; /* Цвет текста в модальном окне */
+  --share-modal-bg: white; /* Фон модального окна поделиться */
+  --share-modal-border: #ddd; /* Граница модального окна поделиться */
+  --platform-btn-bg: #e9ecef; /* Фон кнопки платформы */
+  --platform-btn-hover: #dee2e6; /* Цвет при наведении кнопки платформы */
 }
 /* Тёмная тема: переопределяем переменные */
 [data-theme="dark"] {
@@ -23,7 +43,28 @@
   --list-item-bg: #222; /* Тёмный фон элемента списка */
   --list-item-hover: #444; /* Тёмный цвет при наведении */
   --highlight-color: #666; /* Тёмный цвет выделения */
+  --clear-button-bg: #333; /* Тёмный фон кнопки очистки */
+  --clear-button-hover: #555; /* Тёмный цвет при наведении кнопки очистки */
+  --tag-bg: #444; /* Тёмный фон тега */
+  --tag-text: white; /* Белый цвет текста тега */
+  --tag-border: #666; /* Граница тега */
+  --favorite-btn-bg: #343a40; /* Тёмный фон кнопки избранного */
+  --favorite-btn-hover: #495057; /* Тёмный цвет при наведении кнопки избранного */
+  --favorite-btn-active: #e84393; /* Тёмный цвет активной кнопки избранного */
+  --info-bg: #343a40; /* Тёмный фон информации о файле */
+  --info-text: #adb5bd; /* Тёмный цвет текста информации */
+  --share-btn-bg: #1d3557; /* Тёмный фон кнопки поделиться */
+  --share-btn-hover: #14213d; /* Тёмный цвет при наведении кнопки поделиться */
+  --tag-filter-bg: #343a40; /* Тёмный фон фильтра по тегам */
+  --tag-filter-border: #495057; /* Граница фильтра по тегам */
+  --modal-bg: rgba(0, 0, 0, 0.9); /* Фон модального окна */
+  --modal-text: white; /* Цвет текста в модальном окне */
+  --share-modal-bg: #343a40; /* Тёмный фон модального окна поделиться */
+  --share-modal-border: #495057; /* Тёмная граница модального окна поделиться */
+  --platform-btn-bg: #495057; /* Тёмный фон кнопки платформы */
+  --platform-btn-hover: #343a40; /* Тёмный цвет при наведении кнопки платформы */
 }
+
 /* === ОСНОВНЫЕ СТИЛИ === */
 body {
   background-color: var(--bg-color); /* Используем переменную для фона */
@@ -33,6 +74,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; /* Шрифт */
   transition: background-color 0.3s ease, color 0.3s ease; /* Плавный переход цветов при смене темы */
 }
+
 .container {
   max-width: 800px; /* Увеличен максимальный размер контейнера */
   margin: auto;
@@ -43,6 +85,7 @@ body {
   color: var(--text-color); /* Цвет текста внутри контейнера */
   border: 1px solid var(--border-color); /* Добавлена граница контейнера */
 }
+
 .banner-header {
   text-align: center; /* Центрирует содержимое внутри */
   margin-bottom: 15px;
@@ -51,6 +94,7 @@ body {
   align-items: center; /* Центрирует элементы по горизонтали */
   justify-content: center; /* Центрирует элементы по вертикали */
 }
+
 .banner-image {
   max-width: 100%;
   height: auto;
@@ -59,6 +103,7 @@ body {
   margin: 0 auto; /* Дополнительное центрирование */
   display: block; /* Убирает лишние отступы */
 }
+
 .subtitle {
   text-align: center;
   font-size: 1.4em; /* Увеличенный размер шрифта */
@@ -68,6 +113,7 @@ body {
   font-style: italic;
   width: 100%; /* Занимает всю ширину контейнера */
 }
+
 h1 {
   text-align: center; /* Центрируем заголовок */
   font-family: Consolas, monospace; /* Шрифт */
@@ -76,17 +122,13 @@ h1 {
   color: var(--text-color); /* Цвет заголовка */
   display: none; /* Скрыто, так как заменено баннером */
 }
+
 p {
   color: var(--text-color); /* Цвет текста параграфов */
   font-size: 16px; /* Базовый размер */
 }
-#answer {
-  font-size: 18px;
-  font-weight: bold;
-  color: var(--text-color);
-  margin-top: 20px;
-}
-input, button {
+
+input, button, select {
   margin: 10px;
   padding: 10px;
   font-size: 16px;
@@ -97,18 +139,71 @@ input, button {
   color: var(--button-text); /* Цвет текста */
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Плавный переход */
 }
+
 button {
   cursor: pointer;
 }
+
 button:hover {
   background-color: var(--button-text);
   color: var(--button-bg);
 }
+
+/* Специальный стиль для кнопки очистки */
+#clear-search-btn {
+  background-color: var(--clear-button-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+}
+
+#clear-search-btn:hover {
+  background-color: var(--clear-button-hover);
+  color: var(--text-color);
+}
+
+/* Стиль для кнопки избранного */
+.favorite-btn {
+  background-color: var(--favorite-btn-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  margin-top: 10px;
+  padding: 8px 15px;
+  font-size: 14px;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+.favorite-btn:hover {
+  background-color: var(--favorite-btn-hover);
+}
+
+.favorite-btn.active {
+  background-color: var(--favorite-btn-active);
+  color: white;
+}
+
+/* Стиль для кнопки поделиться */
+.share-btn {
+  background-color: var(--share-btn-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  margin-top: 10px;
+  padding: 8px 15px;
+  font-size: 14px;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+.share-btn:hover {
+  background-color: var(--share-btn-hover);
+}
+
 label {
   color: var(--text-color);
   display: block;
   margin-top: 10px;
 }
+
 /* Кнопка переключения темы */
 .toggle-theme {
   position: fixed; /* Фиксируем в углу */
@@ -124,21 +219,129 @@ label {
   transition: background-color 0.3s ease, color 0.3s ease; /* Плавный переход цветов */
   z-index: 1000; /* Поверх других элементов */
 }
-/* === СТИЛИ ДЛЯ ГАЛЕРЕИ === */
-#gallery-controls {
+
+/* === СТИЛИ ДЛЯ ПОИСКА === */
+#search-controls {
   text-align: center;
   margin-bottom: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
 }
-#current-index {
-  display: inline-block;
-  margin: 0 15px;
+
+#search-input {
+  flex: 1;
+  min-width: 200px;
+  max-width: 400px;
+}
+
+#filter-select, #sort-select {
+  width: auto;
+}
+
+/* === СТИЛИ ДЛЯ ФИЛЬТРА ПО ТЕГАМ === */
+#tag-filter-container {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: var(--tag-filter-bg);
+  border: 1px solid var(--tag-filter-border);
+  border-radius: 5px;
+}
+
+#tag-filter-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.tag-filter-item {
+  background-color: var(--tag-bg);
+  color: var(--tag-text);
+  border: 1px solid var(--tag-border);
+  border-radius: 12px;
+  padding: 4px 10px;
+  font-size: 0.85em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tag-filter-item:hover {
+  opacity: 0.8;
+  transform: scale(1.05);
+}
+
+.tag-filter-item.active {
+  background-color: var(--favorite-btn-active);
+  color: white;
+  border-color: var(--favorite-btn-active);
+}
+
+/* === СТИЛИ ДЛЯ ТЕГОВ === */
+#art-tags-container {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.tags-label {
   font-weight: bold;
+  color: var(--text-color);
+  white-space: nowrap;
 }
-#art-display {
-  text-align: center;
-  margin: 20px 0;
+
+#art-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
 }
-#art-image {
+
+.tag {
+  background-color: var(--tag-bg);
+  color: var(--tag-text);
+  border: 1px solid var(--tag-border);
+  border-radius: 12px;
+  padding: 2px 8px;
+  font-size: 0.8em;
+  white-space: nowrap;
+}
+
+/* === СТИЛИ ДЛЯ ИНФОРМАЦИИ О ФАЙЛЕ === */
+#art-info-container {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 8px;
+  background-color: var(--info-bg);
+  border-radius: 5px;
+  border: 1px solid var(--border-color);
+}
+
+.info-label {
+  font-weight: bold;
+  color: var(--text-color);
+  white-space: nowrap;
+}
+
+#art-info {
+  color: var(--info-text);
+  font-size: 0.9em;
+  word-break: break-word;
+}
+
+/* === СТИЛИ ДЛЯ УВЕЛИЧЕНИЯ ИЗОБРАЖЕНИЯ === */
+.image-container {
+  position: relative;
+  display: inline-block;
+  cursor: zoom-in;
+}
+
+.main-art-image {
   max-width: 100%; /* Ограничивает ширину изображения по ширине контейнера */
   max-height: 500px; /* Ограничивает высоту изображения */
   width: auto; /* Сохраняет пропорции ширины */
@@ -148,19 +351,138 @@ label {
   border-radius: 5px; /* Слегка закруглённые углы */
   box-shadow: 2px 2px 8px rgba(0,0,0,0.1); /* Лёгкая тень */
 }
+
+.zoom-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--modal-bg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.zoom-overlay.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+#zoom-image {
+  max-width: 90%;
+  max-height: 90%;
+  border: 2px solid white;
+  border-radius: 5px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+/* === СТИЛИ ДЛЯ МОДАЛЬНОГО ОКНА ПОДЕЛИТЬСЯ === */
+.share-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 3000;
+}
+
+.share-modal.open {
+  display: flex;
+}
+
+.share-modal-content {
+  background-color: var(--share-modal-bg);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  border: 1px solid var(--share-modal-border);
+  color: var(--text-color);
+}
+
+.share-platforms {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.share-platform-btn {
+  padding: 12px;
+  margin: 5px 0;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  background-color: var(--platform-btn-bg);
+  color: var(--text-color);
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.2s ease;
+}
+
+.share-platform-btn:hover {
+  background-color: var(--platform-btn-hover);
+}
+
+.close-modal-btn {
+  padding: 10px 20px;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.close-modal-btn:hover {
+  background-color: var(--button-text);
+  color: var(--button-bg);
+}
+
+/* === СТИЛИ ДЛЯ ГАЛЕРЕИ === */
+#gallery-controls {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+#current-index {
+  display: inline-block;
+  margin: 0 15px;
+  font-weight: bold;
+}
+
+#art-display {
+  text-align: center;
+  margin: 20px 0;
+}
+
 #art-description {
   margin-top: 15px;
   font-style: italic;
   line-height: 1.4;
   color: var(--text-color); /* Явно указываем цвет описания */
 }
+
 #art-list-container {
   margin-top: 30px;
 }
+
 #art-list {
   list-style-type: none;
   padding: 0;
 }
+
 .art-item {
   padding: 8px 12px;
   margin: 5px 0;
@@ -171,14 +493,22 @@ label {
   color: var(--text-color); /* Цвет текста элемента списка */
   transition: background-color 0.2s ease, transform 0.1s ease;
 }
+
 .art-item:hover {
   background-color: var(--list-item-hover);
   transform: translateX(5px); /* Лёгкий сдвиг при наведении */
 }
+
 .art-item.highlighted {
   background-color: var(--highlight-color); /* Цвет выделения текущего элемента */
   font-weight: bold;
 }
+
+/* Стиль для скрытых элементов */
+.art-item.hidden {
+  display: none;
+}
+
 /* === АДАПТИВНОСТЬ: МЕДИА-ЗАПРОСЫ === */
 /* Для экранов шириной до 768px */
 @media (max-width: 768px) {
@@ -186,46 +516,105 @@ label {
     max-width: 95%;
     padding: 15px;
   }
+  
   .subtitle {
     font-size: 1.2em; /* Уменьшен размер подзаголовка на мобильных */
   }
+  
+  #search-controls {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  #search-input {
+    width: 90%;
+    max-width: none;
+  }
+  
+  #filter-select, #sort-select, #clear-search-btn {
+    width: 90%;
+  }
+  
+  #tag-filter-container {
+    padding: 10px;
+  }
+  
+  #tag-filter-list {
+    justify-content: center;
+  }
+  
+  #art-tags-container, #art-info-container {
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
   #art-image {
     max-height: 300px; /* Уменьшенная максимальная высота для мобильных */
   }
+  
   .art-item {
     padding: 6px 10px;
     font-size: 14px;
   }
+  
+  .share-modal-content {
+    width: 95%;
+    padding: 15px;
+  }
+  
+  .share-platform-btn {
+    padding: 10px;
+    font-size: 14px;
+  }
 }
+
 /* Для экранов шириной до 480px */
 @media (max-width: 480px) {
   body {
     padding: 5px; /* Уменьшены отступы */
   }
+  
   .subtitle {
     font-size: 1.1em; /* Ещё меньший размер на очень маленьких экранах */
   }
+  
   #art-image {
     max-height: 200px; /* Ещё меньшая максимальная высота */
   }
+  
   #gallery-controls button {
     padding: 8px 12px;
     font-size: 14px;
   }
+  
   .toggle-theme {
     font-size: 0.9em;
     padding: 3px 6px;
   }
+  
+  .share-modal-content {
+    padding: 10px;
+  }
+  
+  .share-platform-btn {
+    padding: 8px;
+    font-size: 13px;
+  }
 }
+
 /* Для экранов шириной от 1200px */
 @media (min-width: 1200px) {
   .container {
     max-width: 1000px; /* Увеличен максимальный размер для больших экранов */
     padding: 30px;
   }
+  
   .subtitle {
     font-size: 1.6em; /* Увеличен размер подзаголовка на больших экранах */
   }
+  
   #art-image {
     max-height: 600px; /* Увеличенная максимальная высота для больших экранов */
   }
