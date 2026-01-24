@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Галерея артов</title>
+  <title>DRCJP</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -11,20 +11,74 @@
     <header class="banner-header">
       <img src="image/BANNER.jpg" alt="DRCJP Banner" class="banner-image" />
     </header>
-    
     <p class="subtitle">О несовершенном, живом, человеческом</p>
+    
+    <!-- Блок управления фильтрацией -->
+    <div id="search-controls">
+      <input type="text" id="search-input" placeholder="Поиск по названию или описанию..." />
+      <select id="filter-select">
+        <option value="all">Все арты</option>
+        <option value="title">Только по названию</option>
+        <option value="description">Только по описанию</option>
+        <option value="favorites">Только избранное</option>
+      </select>
+      <select id="sort-select">
+        <option value="default">Сортировка: по умолчанию</option>
+        <option value="title-asc">По названию (А-Я)</option>
+        <option value="title-desc">По названию (Я-А)</option>
+        <option value="id-asc">По ID (возрастание)</option>
+        <option value="id-desc">По ID (убывание)</option>
+      </select>
+      <button id="clear-search-btn">Очистить фильтр</button>
+    </div>
+    
+    <!-- Фильтр по тегам -->
+    <div id="tag-filter-container">
+      <h4>Фильтр по тегам:</h4>
+      <div id="tag-filter-list"></div>
+    </div>
     
     <div id="gallery-controls">
       <button id="prev-btn">Предыдущий</button>
       <span id="current-index">0 из 0</span>
       <button id="next-btn">Следующий</button>
     </div>
-
+    
     <div id="art-display">
-      <img id="art-image" src="" alt="Изображение арта" />
+      <div class="image-container">
+        <img id="art-image" src="" alt="Изображение арта" class="main-art-image" />
+        <div class="zoom-overlay" id="zoom-overlay">
+          <img id="zoom-image" src="" alt="Увеличенное изображение" />
+        </div>
+      </div>
       <p id="art-description"></p>
+      <div id="art-tags-container">
+        <span class="tags-label">Теги:</span>
+        <span id="art-tags"></span>
+      </div>
+      <div id="art-info-container">
+        <span class="info-label">Информация о файле:</span>
+        <span id="art-info"></span>
+      </div>
+      <button id="favorite-btn" class="favorite-btn">Добавить в избранное</button>
+      <button id="share-btn" class="share-btn">Поделиться артом</button>
     </div>
-
+    
+    <!-- Модальное окно для выбора платформы -->
+    <div id="share-modal" class="share-modal">
+      <div class="share-modal-content">
+        <h3>Поделиться артом</h3>
+        <div class="share-platforms">
+          <button class="share-platform-btn" data-platform="vk">ВКонтакте</button>
+          <button class="share-platform-btn" data-platform="telegram">Telegram</button>
+          <button class="share-platform-btn" data-platform="ok">Одноклассники</button>
+          <button class="share-platform-btn" data-platform="bluesky">Bluesky</button>
+          <button class="share-platform-btn" data-platform="copy">Копировать ссылку</button>
+        </div>
+        <button id="close-share-modal" class="close-modal-btn">Закрыть</button>
+      </div>
+    </div>
+    
     <div id="art-list-container">
       <h3>Все арты:</h3>
       <ul id="art-list"></ul>
