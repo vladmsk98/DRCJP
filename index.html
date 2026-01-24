@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Галерея артов</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="banner-header">
+      <img src="image/BANNER.jpg" alt="DRCJP Banner" class="banner-image" />
+    </header>
+    
+    <p class="subtitle">О несовершенном, живом, человеческом</p>
+    
+    <div id="gallery-controls">
+      <button id="prev-btn">Предыдущий</button>
+      <span id="current-index">0 из 0</span>
+      <button id="next-btn">Следующий</button>
+    </div>
+
+    <div id="art-display">
+      <img id="art-image" src="" alt="Изображение арта" />
+      <p id="art-description"></p>
+    </div>
+
+    <div id="art-list-container">
+      <h3>Все арты:</h3>
+      <ul id="art-list"></ul>
+    </div>
+  </div>
+
+  <button class="toggle-theme" id="theme-toggle">Сменить тему</button>
+  <script src="script.js"></script>
+</body>
+</html>
