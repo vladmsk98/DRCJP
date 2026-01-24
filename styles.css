@@ -1,4 +1,4 @@
-/* === ПЕРЕМЕННЫЕ CSS ДЛЯ ЦВЕРОВЫХ ТЕМ === */
+/* === ПЕРЕМЕННЫЕ CSS ДЛЯ ЦВЕТОВЫХ ТЕМ === */
 /* Основные переменные для тем */
 :root {
   /* Светлая тема (по умолчанию) */
@@ -6,15 +6,24 @@
   --text-color: black; /* Чёрный цвет текста */
   --container-bg: white; /* Цвет фона контейнера */
   --border-color: black; /* Чёрный цвет границы */
+  --button-bg: white; /* Фон кнопки */
+  --button-text: black; /* Текст кнопки */
+  --list-item-bg: white; /* Фон элемента списка */
+  --list-item-hover: #f0f0f0; /* Цвет при наведении */
+  --highlight-color: #ffff99; /* Цвет выделения */
 }
 /* Тёмная тема: переопределяем переменные */
 [data-theme="dark"] {
   --bg-color: black; /* Чёрный цвет фона */
   --text-color: white; /* Белый цвет текста */
-  --container-bg: white; /* Белый фон контейнера */
-  --border-color: black; /* Чёрный цвет границы */
+  --container-bg: #222; /* Тёмный фон контейнера */
+  --border-color: white; /* Белый цвет границы */
+  --button-bg: #222; /* Тёмный фон кнопки */
+  --button-text: white; /* Белый текст кнопки */
+  --list-item-bg: #222; /* Тёмный фон элемента списка */
+  --list-item-hover: #444; /* Тёмный цвет при наведении */
+  --highlight-color: #666; /* Тёмный цвет выделения */
 }
-
 /* === ОСНОВНЫЕ СТИЛИ === */
 body {
   background-color: var(--bg-color); /* Используем переменную для фона */
@@ -24,7 +33,6 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; /* Шрифт */
   transition: background-color 0.3s ease, color 0.3s ease; /* Плавный переход цветов при смене темы */
 }
-
 .container {
   max-width: 800px; /* Увеличен максимальный размер контейнера */
   margin: auto;
@@ -35,7 +43,6 @@ body {
   color: var(--text-color); /* Цвет текста внутри контейнера */
   border: 1px solid var(--border-color); /* Добавлена граница контейнера */
 }
-
 .banner-header {
   text-align: center; /* Центрирует содержимое внутри */
   margin-bottom: 15px;
@@ -44,7 +51,6 @@ body {
   align-items: center; /* Центрирует элементы по горизонтали */
   justify-content: center; /* Центрирует элементы по вертикали */
 }
-
 .banner-image {
   max-width: 100%;
   height: auto;
@@ -53,7 +59,6 @@ body {
   margin: 0 auto; /* Дополнительное центрирование */
   display: block; /* Убирает лишние отступы */
 }
-
 .subtitle {
   text-align: center;
   font-size: 1.4em; /* Увеличенный размер шрифта */
@@ -63,7 +68,6 @@ body {
   font-style: italic;
   width: 100%; /* Занимает всю ширину контейнера */
 }
-
 h1 {
   text-align: center; /* Центрируем заголовок */
   font-family: Consolas, monospace; /* Шрифт */
@@ -72,19 +76,16 @@ h1 {
   color: var(--text-color); /* Цвет заголовка */
   display: none; /* Скрыто, так как заменено баннером */
 }
-
 p {
   color: var(--text-color); /* Цвет текста параграфов */
   font-size: 16px; /* Базовый размер */
 }
-
 #answer {
   font-size: 18px;
   font-weight: bold;
   color: var(--text-color);
   margin-top: 20px;
 }
-
 input, button {
   margin: 10px;
   padding: 10px;
@@ -92,59 +93,51 @@ input, button {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; /* Единый шрифт */
   border: 1px solid var(--border-color); /* Граница */
   border-radius: 5px; /* Закругление */
-  background-color: var(--container-bg); /* Фон */
-  color: var(--text-color); /* Цвет текста */
+  background-color: var(--button-bg); /* Фон */
+  color: var(--button-text); /* Цвет текста */
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Плавный переход */
 }
-
 button {
   cursor: pointer;
 }
-
 button:hover {
-  background-color: var(--text-color);
-  color: var(--container-bg);
+  background-color: var(--button-text);
+  color: var(--button-bg);
 }
-
 label {
   color: var(--text-color);
   display: block;
   margin-top: 10px;
 }
-
 /* Кнопка переключения темы */
 .toggle-theme {
   position: fixed; /* Фиксируем в углу */
   top: 10px;
   right: 10px;
-  background-color: transparent; /* Прозрачный фон */
-  border: 1px solid var(--text-color); /* Граница цвета текста */
+  background-color: var(--button-bg); /* Цвет фона */
+  border: 1px solid var(--border-color); /* Граница цвета текста */
   border-radius: 5px; /* Закругление углов */
   padding: 5px 10px; /* Внутренние отступы */
   cursor: pointer; /* Курсор-указатель */
   font-family: Consolas, monospace; /* Шрифт */
-  color: var(--text-color); /* Цвет текста */
+  color: var(--button-text); /* Цвет текста */
   transition: background-color 0.3s ease, color 0.3s ease; /* Плавный переход цветов */
   z-index: 1000; /* Поверх других элементов */
 }
-
 /* === СТИЛИ ДЛЯ ГАЛЕРЕИ === */
 #gallery-controls {
   text-align: center;
   margin-bottom: 20px;
 }
-
 #current-index {
   display: inline-block;
   margin: 0 15px;
   font-weight: bold;
 }
-
 #art-display {
   text-align: center;
   margin: 20px 0;
 }
-
 #art-image {
   max-width: 100%; /* Ограничивает ширину изображения по ширине контейнера */
   max-height: 500px; /* Ограничивает высоту изображения */
@@ -155,42 +148,37 @@ label {
   border-radius: 5px; /* Слегка закруглённые углы */
   box-shadow: 2px 2px 8px rgba(0,0,0,0.1); /* Лёгкая тень */
 }
-
 #art-description {
   margin-top: 15px;
   font-style: italic;
   line-height: 1.4;
+  color: var(--text-color); /* Явно указываем цвет описания */
 }
-
 #art-list-container {
   margin-top: 30px;
 }
-
 #art-list {
   list-style-type: none;
   padding: 0;
 }
-
 .art-item {
   padding: 8px 12px;
   margin: 5px 0;
-  background-color: var(--container-bg);
+  background-color: var(--list-item-bg);
   border: 1px solid var(--border-color);
   border-radius: 4px;
   cursor: pointer;
+  color: var(--text-color); /* Цвет текста элемента списка */
   transition: background-color 0.2s ease, transform 0.1s ease;
 }
-
 .art-item:hover {
-  background-color: #f0f0f0;
+  background-color: var(--list-item-hover);
   transform: translateX(5px); /* Лёгкий сдвиг при наведении */
 }
-
 .art-item.highlighted {
-  background-color: #ffff99; /* Цвет выделения текущего элемента */
+  background-color: var(--highlight-color); /* Цвет выделения текущего элемента */
   font-weight: bold;
 }
-
 /* === АДАПТИВНОСТЬ: МЕДИА-ЗАПРОСЫ === */
 /* Для экранов шириной до 768px */
 @media (max-width: 768px) {
@@ -198,57 +186,46 @@ label {
     max-width: 95%;
     padding: 15px;
   }
-  
   .subtitle {
     font-size: 1.2em; /* Уменьшен размер подзаголовка на мобильных */
   }
-  
   #art-image {
     max-height: 300px; /* Уменьшенная максимальная высота для мобильных */
   }
-  
   .art-item {
     padding: 6px 10px;
     font-size: 14px;
   }
 }
-
 /* Для экранов шириной до 480px */
 @media (max-width: 480px) {
   body {
     padding: 5px; /* Уменьшены отступы */
   }
-  
   .subtitle {
     font-size: 1.1em; /* Ещё меньший размер на очень маленьких экранах */
   }
-  
   #art-image {
     max-height: 200px; /* Ещё меньшая максимальная высота */
   }
-  
   #gallery-controls button {
     padding: 8px 12px;
     font-size: 14px;
   }
-  
   .toggle-theme {
     font-size: 0.9em;
     padding: 3px 6px;
   }
 }
-
 /* Для экранов шириной от 1200px */
 @media (min-width: 1200px) {
   .container {
     max-width: 1000px; /* Увеличен максимальный размер для больших экранов */
     padding: 30px;
   }
-  
   .subtitle {
     font-size: 1.6em; /* Увеличен размер подзаголовка на больших экранах */
   }
-  
   #art-image {
     max-height: 600px; /* Увеличенная максимальная высота для больших экранов */
   }
