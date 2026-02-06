@@ -12,7 +12,16 @@
       <img src="image/BANNER.jpg" alt="DRCJP Banner" class="banner-image" />
     </header>
     <p class="subtitle">О несовершенном, живом, человеческом</p>
-    
+    <button id="toggle-promo-btn" class="promo-toggle-btn">Скрыть промо-видео</button>
+
+    <!-- Новый блок: промо-видео -->
+    <div class="promo-video-container">
+      <video id="promo-video" controls>
+        <source src="video/promo.mp4" type="video/mp4">
+        Ваш браузер не поддерживает тег video.
+      </video>
+    </div>
+
     <!-- Блок управления фильтрацией -->
     <div id="search-controls">
       <input type="text" id="search-input" placeholder="Поиск по названию или описанию..." />
@@ -31,19 +40,19 @@
       </select>
       <button id="clear-search-btn">Очистить фильтр</button>
     </div>
-    
+
     <!-- Фильтр по тегам -->
     <div id="tag-filter-container">
       <h4>Фильтр по тегам:</h4>
       <div id="tag-filter-list"></div>
     </div>
-    
+
     <div id="gallery-controls">
       <button id="prev-btn">Предыдущий</button>
       <span id="current-index">0 из 0</span>
       <button id="next-btn">Следующий</button>
     </div>
-    
+
     <div id="art-display">
       <div class="image-container">
         <img id="art-image" src="" alt="Изображение арта" class="main-art-image" />
@@ -63,7 +72,7 @@
       <button id="favorite-btn" class="favorite-btn">Добавить в избранное</button>
       <button id="share-btn" class="share-btn">Поделиться артом</button>
     </div>
-    
+
     <!-- Модальное окно для выбора платформы -->
     <div id="share-modal" class="share-modal">
       <div class="share-modal-content">
@@ -78,7 +87,7 @@
         <button id="close-share-modal" class="close-modal-btn">Закрыть</button>
       </div>
     </div>
-    
+
     <div id="art-list-container">
       <h3>Все арты:</h3>
       <ul id="art-list"></ul>
