@@ -28,6 +28,11 @@ const mainArtImage = document.getElementById('art-image');
 const shareModal = document.getElementById('share-modal');
 const closeShareModal = document.getElementById('close-share-modal');
 const sharePlatformButtons = document.querySelectorAll('.share-platform-btn');
+// НОВЫЙ ЭЛЕМЕНТ: контейнер для динамического изображения
+const dynamicImageContainer = document.getElementById('dynamic-image-container');
+// НОВЫЕ ЭЛЕМЕНТЫ: кнопка и контейнер промо-видео
+const togglePromoBtn = document.getElementById('toggle-promo-btn');
+const promoVideoContainer = document.querySelector('.promo-video-container');
 
 // --- ДАННЫЕ ГАЛЕРЕИ ---
 // Массив объектов с информацией об артах (обновлены разрешения изображений, добавлены новые арты)
@@ -86,6 +91,18 @@ const galleryData = [
       format: "JPEG",
       dimensions: "3000x3000"
     }
+  },
+  // === НОВЫЙ АРТ: AIMAI (31.01.2026) ===
+  {
+    id: 6,
+    title: "AIMAI (31.01.2026)",
+    description: "На фотографии изображено японское слово 「曖昧」(aimai), которое переводится как «неопределённость», «двусмысленность» или «расплывчатость». Это слово отражает атмосферу изображения — мягкую, приглушённую, где детали теряются в снегу и тени, создавая ощущение недосказанности и открытости для интерпретации.",
+    imageUrl: "arts/AIMAI (31.01.2026).jpg",
+    tags: ["японские иероглифы", "неопределённость", "фотография", "снег"],
+    fileDetails: {
+      format: "JPEG",
+      dimensions: "3000x3000"
+    }
   }
 ];
 
@@ -102,7 +119,8 @@ const StateModule = {
   storageKey: 'drcjp_gallery_state',
   favoritesKey: 'drcjp_favorites',
   tagFiltersKey: 'drcjp_tag_filters',
-  
+  promoVisibleKey: 'drcjp_promo_visible', // ← новая ключевая переменная
+
   saveState(query, filterType, sortType) {
     const state = {
       query: query,
@@ -115,7 +133,7 @@ const StateModule = {
       console.warn('Не удалось сохранить состояние в localStorage:', e);
     }
   },
-  
+
   loadState() {
     try {
       const saved = localStorage.getItem(this.storageKey);
@@ -127,7 +145,7 @@ const StateModule = {
     }
     return null;
   },
-  
+
   clearState() {
     try {
       localStorage.removeItem(this.storageKey);
@@ -135,7 +153,7 @@ const StateModule = {
       console.warn('Не удалось очистить состояние в localStorage:', e);
     }
   },
-  
+
   saveFavorites() {
     try {
       localStorage.setItem(this.favoritesKey, JSON.stringify([...favorites]));
@@ -143,7 +161,7 @@ const StateModule = {
       console.warn('Не удалось сохранить избранное в localStorage:', e);
     }
   },
-  
+
   loadFavorites() {
     try {
       const saved = localStorage.getItem(this.favoritesKey);
@@ -157,7 +175,7 @@ const StateModule = {
       console.warn('Не удалось загрузить избранное из localStorage:', e);
     }
   },
-  
+
   saveTagFilters() {
     try {
       localStorage.setItem(this.tagFiltersKey, JSON.stringify([...activeTagFilters]));
@@ -165,7 +183,7 @@ const StateModule = {
       console.warn('Не удалось сохранить фильтры по тегам в localStorage:', e);
     }
   },
-  
+
   loadTagFilters() {
     try {
       const saved = localStorage.getItem(this.tagFiltersKey);
@@ -177,6 +195,26 @@ const StateModule = {
       }
     } catch (e) {
       console.warn('Не удалось загрузить фильтры по тегам из localStorage:', e);
+    }
+  },
+
+  // Сохранить видимость промо
+  savePromoVisibility(visible) {
+    try {
+      localStorage.setItem(this.promoVisibleKey, JSON.stringify(visible));
+    } catch (e) {
+      console.warn('Не удалось сохранить видимость промо в localStorage:', e);
+    }
+  },
+
+  // Загрузить видимость промо
+  loadPromoVisibility() {
+    try {
+      const saved = localStorage.getItem(this.promoVisibleKey);
+      return saved === null ? true : JSON.parse(saved); // по умолчанию показывать
+    } catch (e) {
+      console.warn('Не удалось загрузить видимость промо из localStorage:', e);
+      return true;
     }
   }
 };
@@ -190,7 +228,7 @@ const SortModule = {
     'id-desc': (a, b) => b.id - a.id,
     'default': (a, b) => galleryData.indexOf(a) - galleryData.indexOf(b) // Сохранить исходный порядок
   },
-  
+
   sortData(data, sortType) {
     const compareFn = this.compareFunctions[sortType] || this.compareFunctions['default'];
     return [...data].sort(compareFn);
@@ -213,15 +251,15 @@ const FavoritesModule = {
       this.applyFilters();
     }
   },
-  
+
   isFavorite(artId) {
     return favorites.has(artId);
   },
-  
+
   getFavoritesData() {
     return galleryData.filter(art => this.isFavorite(art.id));
   },
-  
+
   updateFavoriteButton(artId) {
     if (this.isFavorite(artId)) {
       favoriteBtn.textContent = 'Удалить из избранного';
@@ -231,12 +269,12 @@ const FavoritesModule = {
       favoriteBtn.classList.remove('active');
     }
   },
-  
+
   applyFilters() {
     const query = searchInput.value.trim();
     const filterType = filterSelect.value;
     const sortType = sortSelect.value;
-    
+
     SearchModule.filterAndSortData(query, filterType, sortType);
   }
 };
@@ -248,25 +286,25 @@ const ShareModule = {
     shareModal.classList.add('open');
     document.body.style.overflow = 'hidden'; // Предотвращаем прокрутку фона
   },
-  
+
   closeShareModal() {
     shareModal.classList.remove('open');
     document.body.style.overflow = ''; // Восстанавливаем прокрутку
   },
-  
+
   shareToPlatform(platform) {
     if (!currentArtForSharing) {
       console.error('Нет арта для деления');
       return;
     }
-    
+
     const currentUrl = window.location.href.split('?')[0];
     const shareUrl = `${currentUrl}?art=${currentArtForSharing.id}`;
     const title = encodeURIComponent(currentArtForSharing.title);
     const description = encodeURIComponent(currentArtForSharing.description.substring(0, 100)); // Ограничение длины описания
-    
+
     let shareLink = '';
-    
+
     switch (platform) {
       case 'vk':
         shareLink = `https://vk.com/share.php?url=${encodeURIComponent(shareUrl)}&title=${title}&description=${description}`;
@@ -288,12 +326,12 @@ const ShareModule = {
         console.error('Неизвестная платформа:', platform);
         return;
     }
-    
+
     // Открываем ссылку в новом окне
     window.open(shareLink, '_blank', 'noopener,noreferrer');
     this.closeShareModal();
   },
-  
+
   async copyLink(url) {
     try {
       await navigator.clipboard.writeText(url);
@@ -322,36 +360,36 @@ const TagFilterModule = {
         art.tags.forEach(tag => allTags.add(tag));
       }
     });
-    
+
     // Очищаем контейнер
     tagFilterList.innerHTML = '';
-    
+
     // Создаём элементы для каждого тега
     allTags.forEach(tag => {
       const tagElement = document.createElement('div');
       tagElement.className = 'tag-filter-item';
       tagElement.textContent = tag;
       tagElement.dataset.tag = tag;
-      
+
       if (activeTagFilters.has(tag)) {
         tagElement.classList.add('active');
       }
-      
+
       tagElement.addEventListener('click', () => {
         this.toggleTagFilter(tag);
       });
-      
+
       tagFilterList.appendChild(tagElement);
     });
   },
-  
+
   toggleTagFilter(tag) {
     if (activeTagFilters.has(tag)) {
       activeTagFilters.delete(tag);
     } else {
       activeTagFilters.add(tag);
     }
-    
+
     // Обновляем активные классы
     const tagElements = document.querySelectorAll('.tag-filter-item');
     tagElements.forEach(el => {
@@ -359,31 +397,31 @@ const TagFilterModule = {
         el.classList.toggle('active', activeTagFilters.has(tag));
       }
     });
-    
+
     StateModule.saveTagFilters();
-    
+
     // Применяем фильтрацию
     this.applyFilters();
   },
-  
+
   applyFilters() {
     const query = searchInput.value.trim();
     const filterType = filterSelect.value;
     const sortType = sortSelect.value;
-    
+
     SearchModule.filterAndSortData(query, filterType, sortType);
   },
-  
+
   filterByTags(data) {
     if (activeTagFilters.size === 0) {
       return data;
     }
-    
+
     return data.filter(art => {
       if (!art.tags || !Array.isArray(art.tags)) {
         return false;
       }
-      
+
       // Проверяем, содержит ли хотя бы один тег из арта любой из активных фильтров
       return art.tags.some(tag => activeTagFilters.has(tag));
     });
@@ -397,12 +435,12 @@ const ZoomModule = {
     zoomOverlay.classList.add('visible');
     document.body.style.overflow = 'hidden'; // Предотвращаем прокрутку фона
   },
-  
+
   hideZoom() {
     zoomOverlay.classList.remove('visible');
     document.body.style.overflow = ''; // Восстанавливаем прокрутку
   },
-  
+
   initializeEventListeners() {
     // Открытие при клике на изображение
     mainArtImage.addEventListener('click', () => {
@@ -410,14 +448,14 @@ const ZoomModule = {
         this.showZoom(mainArtImage.src);
       }
     });
-    
+
     // Закрытие при клике на оверлей
     zoomOverlay.addEventListener('click', (e) => {
       if (e.target === zoomOverlay) {
         this.hideZoom();
       }
     });
-    
+
     // Закрытие при нажатии Esc
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && zoomOverlay.classList.contains('visible')) {
@@ -434,11 +472,11 @@ const SearchModule = {
     if (filterType === 'favorites') {
       return FavoritesModule.isFavorite(art.id);
     }
-    
+
     const lowerQuery = query.toLowerCase();
     const titleMatch = art.title.toLowerCase().includes(lowerQuery);
     const descMatch = art.description.toLowerCase().includes(lowerQuery);
-    
+
     switch (filterType) {
       case 'title':
         return titleMatch;
@@ -449,41 +487,41 @@ const SearchModule = {
         return titleMatch || descMatch;
     }
   },
-  
+
   // Фильтрация и сортировка данных
   filterAndSortData(query, filterType, sortType) {
     let resultData;
-    
+
     if (!query && filterType !== 'favorites') {
       resultData = [...galleryData];
     } else {
-      resultData = galleryData.filter(art => 
+      resultData = galleryData.filter(art =>
         this.matchesSearch(art, query, filterType)
       );
     }
-    
+
     // Фильтрация по тегам
     resultData = TagFilterModule.filterByTags(resultData);
-    
+
     // Сортировка данных
     resultData = SortModule.sortData(resultData, sortType);
-    
+
     filteredData = resultData;
-    
+
     // Сброс индекса при изменении фильтра
     if (filteredData.length > 0 && currentIndex >= filteredData.length) {
       currentIndex = 0;
     } else if (filteredData.length === 0) {
       currentIndex = -1;
     }
-    
+
     DisplayModule.updateArtList();
     DisplayModule.updateDisplay(currentIndex);
-    
+
     // Сохраняем состояние
     StateModule.saveState(query, filterType, sortType);
   },
-  
+
   // Очистка фильтра
   clearFilter() {
     searchInput.value = '';
@@ -512,27 +550,27 @@ const DisplayModule = {
       currentIndexDisplay.textContent = `Найдено: ${filteredData.length} из ${galleryData.length}`;
       return;
     }
-    
+
     if (index < 0 || index >= filteredData.length) {
       index = 0;
     }
-    
+
     const art = filteredData[index];
     artImage.src = art.imageUrl;
     artImage.alt = art.title;
     artDescription.textContent = `${art.title}: ${art.description}`;
-    
+
     // Обновить теги
     this.updateTags(art.tags);
-    
+
     // Обновить информацию о файле
     this.updateFileInfo(art.fileDetails);
-    
+
     // Обновить состояние кнопки избранного
     FavoritesModule.updateFavoriteButton(art.id);
     favoriteBtn.style.display = 'inline-block'; // Показать кнопку избранного
     shareBtn.style.display = 'inline-block'; // Показать кнопку поделиться
-    
+
     // Обновлённый формат отображения с количеством результатов
     currentIndexDisplay.textContent = `${index + 1} из ${filteredData.length} (найдено: ${filteredData.length}/${galleryData.length})`;
     currentIndex = index;
@@ -540,7 +578,7 @@ const DisplayModule = {
 
   updateTags(tags) {
     artTags.innerHTML = "";
-    
+
     if (!tags || tags.length === 0) {
       const span = document.createElement('span');
       span.textContent = 'Нет тегов';
@@ -548,7 +586,7 @@ const DisplayModule = {
       artTags.appendChild(span);
       return;
     }
-    
+
     tags.forEach(tag => {
       const span = document.createElement('span');
       span.className = 'tag';
@@ -559,7 +597,7 @@ const DisplayModule = {
 
   updateFileInfo(fileDetails) {
     artInfo.innerHTML = "";
-    
+
     if (!fileDetails) {
       const span = document.createElement('span');
       span.textContent = 'Нет информации о файле';
@@ -567,11 +605,11 @@ const DisplayModule = {
       artInfo.appendChild(span);
       return;
     }
-    
+
     const details = [];
     if (fileDetails.format) details.push(`Формат: ${fileDetails.format}`);
     if (fileDetails.dimensions) details.push(`Разрешение: ${fileDetails.dimensions}`);
-    
+
     if (details.length === 0) {
       const span = document.createElement('span');
       span.textContent = 'Нет информации о файле';
@@ -579,7 +617,7 @@ const DisplayModule = {
       artInfo.appendChild(span);
       return;
     }
-    
+
     artInfo.textContent = details.join(', ');
   },
 
@@ -589,17 +627,17 @@ const DisplayModule = {
     filteredData.forEach((art, originalIndex) => {
       const li = document.createElement('li');
       li.className = 'art-item';
-      
+
       // Находим оригинальный индекс в galleryData для навигации
       const realOriginalIndex = galleryData.findIndex(item => item.id === art.id);
-      
+
       li.textContent = `${art.title} (${art.id})`;
-      
+
       // Помечаем избранные элементы в списке
       if (FavoritesModule.isFavorite(art.id)) {
         li.textContent += ' ★';
       }
-      
+
       li.addEventListener('click', () => {
         // Находим индекс в отфильтрованном массиве
         const filteredIndex = filteredData.findIndex(item => item.id === art.id);
@@ -647,6 +685,35 @@ const NavigationModule = {
       DisplayModule.updateDisplay(currentIndex);
       DisplayModule.scrollToCurrentArt();
     }
+  }
+};
+
+// --- НОВЫЙ МОДУЛЬ: ДИНАМИЧЕСКОЕ ИЗОБРАЖЕНИЕ ---
+const DynamicImageModule = {
+  /**
+   * Добавляет изображение в контейнер #dynamic-image-container
+   * @param {string} imagePath - Путь к изображению (например, "images/my_image.jpg")
+   * @param {string} [altText] - Текст для атрибута alt (опционально)
+   */
+  addImage(imagePath, altText = 'Динамическое изображение') {
+    // Проверяем, существует ли элемент контейнера
+    if (!dynamicImageContainer) {
+      console.error('Контейнер #dynamic-image-container не найден в DOM.');
+      return;
+    }
+
+    // Очищаем контейнер перед добавлением нового изображения
+    dynamicImageContainer.innerHTML = '';
+
+    // Создаём новый элемент изображения
+    const imgElement = document.createElement('img');
+    imgElement.src = imagePath;
+    imgElement.alt = altText;
+
+    // Добавляем изображение в контейнер
+    dynamicImageContainer.appendChild(imgElement);
+
+    console.log(`Динамическое изображение добавлено: ${imagePath}`);
   }
 };
 
@@ -754,20 +821,46 @@ document.addEventListener('keydown', (event) => {
   }
 });
 
+// --- ИНИЦИАЛИЗАЦИЯ ВИДИМОСТИ ПРОМО ---
+let isPromoVisible;
+function initPromoVisibility() {
+  isPromoVisible = StateModule.loadPromoVisibility();
+  if (!isPromoVisible) {
+    promoVideoContainer.classList.add('promo-video-hidden');
+    togglePromoBtn.textContent = 'Показать промо-видео';
+  } else {
+    promoVideoContainer.classList.remove('promo-video-hidden');
+    togglePromoBtn.textContent = 'Скрыть промо-видео';
+  }
+}
+
+// Обработчик переключения промо
+togglePromoBtn.addEventListener('click', () => {
+  isPromoVisible = !isPromoVisible;
+  if (isPromoVisible) {
+    promoVideoContainer.classList.remove('promo-video-hidden');
+    togglePromoBtn.textContent = 'Скрыть промо-видео';
+  } else {
+    promoVideoContainer.classList.add('promo-video-hidden');
+    togglePromoBtn.textContent = 'Показать промо-видео';
+  }
+  StateModule.savePromoVisibility(isPromoVisible);
+});
+
 // --- ИНИЦИАЛИЗАЦИЯ ---
 function initGallery() {
   // Загружаем сохранённое избранное
   StateModule.loadFavorites();
-  
+
   // Загружаем сохранённые фильтры по тегам
   StateModule.loadTagFilters();
-  
+
   // Инициализируем фильтры по тегам
   TagFilterModule.initializeTagFilters();
-  
+
   // Инициализируем модуль увеличения изображения
   ZoomModule.initializeEventListeners();
-  
+
   // Загружаем сохранённое состояние при инициализации
   const savedState = StateModule.loadState();
   if (savedState) {
@@ -780,6 +873,9 @@ function initGallery() {
     DisplayModule.updateArtList();
     DisplayModule.updateDisplay(currentIndex);
   }
+
+  // --- НОВОЕ ---
+  initPromoVisibility();
 }
 
 initGallery();
