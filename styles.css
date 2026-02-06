@@ -1,4 +1,4 @@
-/* === ПЕРЕМЕННЫЕ CSS ДЛЯ ЦВЕТОВЫХ ТЕМ === */
+/* === ПЕРЕМЕННЫЕ CSS ДЛЯ ЦВЕНОВЫХ ТЕМ === */
 /* Основные переменные для тем */
 :root {
   /* Светлая тема (по умолчанию) */
@@ -218,6 +218,62 @@ label {
   color: var(--button-text); /* Цвет текста */
   transition: background-color 0.3s ease, color 0.3s ease; /* Плавный переход цветов */
   z-index: 1000; /* Поверх других элементов */
+}
+
+/* === СТИЛИ ДЛЯ ПРОМО-ВИДЕО === */
+.promo-video-container {
+  text-align: center; /* Центрируем видео */
+  margin: 20px 0; /* Отступы сверху и снизу */
+  width: 100%; /* Занимает всю ширину родителя */
+}
+
+.promo-video-container video {
+  max-width: 100%; /* Ограничивает ширину видео */
+  height: auto; /* Сохраняет пропорции высоты */
+  display: block; /* Убирает лишние отступы */
+  margin: 0 auto; /* Центрирует видео */
+  border-radius: 8px; /* Закругление углов */
+  box-shadow: 3px 3px 10px rgba(0,0,0,0.15); /* Лёгкая тень */
+}
+
+/* === СТИЛИ ДЛЯ ПЕРЕКЛЮЧАТЕЛЯ ПРОМО-ВИДЕО === */
+.promo-toggle-btn {
+  display: block;
+  margin: 10px auto;
+  padding: 8px 16px;
+  font-size: 14px;
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.promo-toggle-btn:hover {
+  background-color: var(--button-text);
+  color: var(--button-bg);
+}
+
+/* Скрытие промо-видео */
+.promo-video-container.promo-video-hidden {
+  display: none;
+}
+
+/* === СТИЛИ ДЛЯ ДИНАМИЧЕСКОГО ИЗОБРАЖЕНИЯ === */
+#dynamic-image-container {
+  text-align: center; /* Центрируем изображение */
+  margin: 20px 0; /* Отступы сверху и снизу */
+  width: 100%; /* Занимает всю ширину родителя */
+}
+
+#dynamic-image-container img {
+  max-width: 100%; /* Ограничивает ширину изображения */
+  height: auto; /* Сохраняет пропорции высоты */
+  display: block; /* Убирает лишние отступы */
+  margin: 0 auto; /* Центрирует изображение */
+  border-radius: 8px; /* Закругление углов */
+  box-shadow: 2px 2px 8px rgba(0,0,0,0.1); /* Лёгкая тень */
 }
 
 /* === СТИЛИ ДЛЯ ПОИСКА === */
@@ -553,6 +609,12 @@ label {
   #art-image {
     max-height: 300px; /* Уменьшенная максимальная высота для мобильных */
   }
+
+  /* Адаптивность для промо-видео и динамического изображения */
+  .promo-video-container video,
+  #dynamic-image-container img {
+    max-height: 300px; /* Ограничение высоты на мобильных */
+  }
   
   .art-item {
     padding: 6px 10px;
@@ -580,7 +642,9 @@ label {
     font-size: 1.1em; /* Ещё меньший размер на очень маленьких экранах */
   }
   
-  #art-image {
+  #art-image,
+  .promo-video-container video,
+  #dynamic-image-container img {
     max-height: 200px; /* Ещё меньшая максимальная высота */
   }
   
@@ -615,7 +679,9 @@ label {
     font-size: 1.6em; /* Увеличен размер подзаголовка на больших экранах */
   }
   
-  #art-image {
+  #art-image,
+  .promo-video-container video,
+  #dynamic-image-container img {
     max-height: 600px; /* Увеличенная максимальная высота для больших экранов */
   }
 }
