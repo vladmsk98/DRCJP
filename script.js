@@ -28,11 +28,11 @@ const mainArtImage = document.getElementById('art-image');
 const shareModal = document.getElementById('share-modal');
 const closeShareModal = document.getElementById('close-share-modal');
 const sharePlatformButtons = document.querySelectorAll('.share-platform-btn');
-// НОВЫЙ ЭЛЕМЕНТ: контейнер для динамического изображения
-const dynamicImageContainer = document.getElementById('dynamic-image-container');
 // НОВЫЕ ЭЛЕМЕНТЫ: кнопка и контейнер промо-видео
 const togglePromoBtn = document.getElementById('toggle-promo-btn');
 const promoVideoContainer = document.querySelector('.promo-video-container');
+// ЭЛЕМЕНТЫ ОБРАТНОГО ОТСЧЁТА
+const countdownTimerElement = document.getElementById('countdown-timer');
 
 // --- ДАННЫЕ ГАЛЕРЕИ ---
 // Массив объектов с информацией об артах (обновлены разрешения изображений, добавлены новые арты)
@@ -688,32 +688,54 @@ const NavigationModule = {
   }
 };
 
-// --- НОВЫЙ МОДУЛЬ: ДИНАМИЧЕСКОЕ ИЗОБРАЖЕНИЕ ---
+// --- НОВЫЙ МОДУЛЬ: ДИНАМИЧЕСКОЕ ИЗОБРАЖЕНИЕ (не используется, но объявлен) ---
+/*
 const DynamicImageModule = {
-  /**
-   * Добавляет изображение в контейнер #dynamic-image-container
-   * @param {string} imagePath - Путь к изображению (например, "images/my_image.jpg")
-   * @param {string} [altText] - Текст для атрибута alt (опционально)
-   */
   addImage(imagePath, altText = 'Динамическое изображение') {
-    // Проверяем, существует ли элемент контейнера
+    const dynamicImageContainer = document.getElementById('dynamic-image-container');
     if (!dynamicImageContainer) {
       console.error('Контейнер #dynamic-image-container не найден в DOM.');
       return;
     }
-
-    // Очищаем контейнер перед добавлением нового изображения
     dynamicImageContainer.innerHTML = '';
-
-    // Создаём новый элемент изображения
     const imgElement = document.createElement('img');
     imgElement.src = imagePath;
     imgElement.alt = altText;
-
-    // Добавляем изображение в контейнер
     dynamicImageContainer.appendChild(imgElement);
-
     console.log(`Динамическое изображение добавлено: ${imagePath}`);
+  }
+};
+*/
+
+// --- МОДУЛЬ ОБРАТНОГО ОТСЧЁТА ---
+const CountdownModule = {
+  targetDate: new Date('2026-03-01T00:00:00+03:00'), // 1 марта 2026, Москва (UTC+3)
+
+  update() {
+    const now = new Date();
+    const timeDiff = this.targetDate - now;
+
+    if (timeDiff <= 0) {
+      countdownTimerElement.textContent = '🎉 Презентация! 🎉';
+      clearInterval(this.intervalId); // Останавливаем обновление
+      return;
+    }
+
+    const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+
+    countdownTimerElement.textContent = `${days}д ${hours}ч ${minutes}м ${seconds}с`;
+  },
+
+  start() {
+    if (!countdownTimerElement) {
+      console.warn('Элемент #countdown-timer не найден, отсчёт не запущен.');
+      return;
+    }
+    this.update(); // Обновить сразу
+    this.intervalId = setInterval(() => this.update(), 1000); // Обновлять каждую секунду
   }
 };
 
@@ -876,6 +898,7 @@ function initGallery() {
 
   // --- НОВОЕ ---
   initPromoVisibility();
+  CountdownModule.start();
 }
 
 initGallery();
