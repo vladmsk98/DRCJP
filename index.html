@@ -21,6 +21,12 @@
       <div id="countdown-timer"></div>
     </div>
 
+    <!-- Новый блок: история просмотров -->
+    <div id="recent-view-history">
+      <h4>Недавно смотрели</h4>
+      <div class="history-grid" id="history-grid"></div>
+    </div>
+
     <!-- Новый блок: кнопка переключения промо-видео -->
     <button id="toggle-promo-btn" class="promo-toggle-btn">Скрыть промо-видео</button>
 
@@ -71,7 +77,13 @@
         <img id="art-image" src="" alt="Изображение арта" class="main-art-image" />
         <div class="zoom-overlay" id="zoom-overlay">
           <img id="zoom-image" src="" alt="Увеличенное изображение" />
+          <!-- Новые кнопки управления зумом -->
+          <div class="zoom-controls">
+            <button id="zoom-in-btn" class="zoom-control-btn">+</button>
+            <button id="zoom-out-btn" class="zoom-control-btn">−</button>
+            <button id="zoom-reset-btn" class="zoom-control-btn">↺</button>
         </div>
+      </div>
       </div>
       <p id="art-description"></p>
       <div id="art-tags-container">
@@ -105,6 +117,13 @@
       <h3>Все арты:</h3>
       <ul id="art-list"></ul>
     </div>
+
+    <!-- Сетка карточек артов -->
+    <div id="art-grid-container">
+      <h3>Карточки артов:</h3>
+      <div id="art-grid"></div>
+    </div>
+
   </div>
 
   <button class="toggle-theme" id="theme-toggle">Сменить тему</button>
