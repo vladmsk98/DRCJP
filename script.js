@@ -8,6 +8,8 @@ const prevBtn = document.getElementById('prev-btn');
 const nextBtn = document.getElementById('next-btn');
 const artListContainer = document.getElementById('art-list-container');
 const artList = document.getElementById('art-list');
+const artGrid = document.getElementById('art-grid'); // <--- НОВЫЙ ЭЛЕМЕНТ
+const historyGrid = document.getElementById('history-grid');
 const themeToggle = document.getElementById('theme-toggle');
 const searchInput = document.getElementById('search-input');
 const filterSelect = document.getElementById('filter-select');
@@ -23,6 +25,9 @@ const tagFilterContainer = document.getElementById('tag-filter-container');
 const tagFilterList = document.getElementById('tag-filter-list');
 const zoomOverlay = document.getElementById('zoom-overlay');
 const zoomImage = document.getElementById('zoom-image');
+const zoomInBtn = document.getElementById('zoom-in-btn');
+const zoomOutBtn = document.getElementById('zoom-out-btn');
+const zoomResetBtn = document.getElementById('zoom-reset-btn');
 const imageContainer = document.querySelector('.image-container');
 const mainArtImage = document.getElementById('art-image');
 const shareModal = document.getElementById('share-modal');
@@ -92,13 +97,24 @@ const galleryData = [
       dimensions: "3000x3000"
     }
   },
-  // === НОВЫЙ АРТ: AIMAI (31.01.2026) ===
   {
     id: 6,
     title: "AIMAI (31.01.2026)",
-    description: "На фотографии изображено японское слово 「曖昧」(aimai), которое переводится как «неопределённость», «двусмысленность» или «расплывчатость». Это слово отражает атмосферу изображения — мягкую, приглушённую, где детали теряются в снегу и тени, создавая ощущение недосказанности и открытости для интерпретации.",
+    description: "На фотографии изображено японское слово 「曖昧」(aimai), которое переводится как «неопределённость», «двусмысленность» или «расплывчатость». Это слово отражает аттмосферу изображения — мягкую, приглушённую, где детали теряются в снегу и тени, создавая ощущение недосказанности и открытости для интерпретации.",
     imageUrl: "arts/AIMAI (31.01.2026).jpg",
     tags: ["японские иероглифы", "неопределённость", "фотография", "снег"],
+    fileDetails: {
+      format: "JPEG",
+      dimensions: "3000x3000"
+    }
+  },
+  // === НОВЫЙ АРТ: SEISHI (18.02.2026) ===
+  {
+    id: 7,
+    title: "SEISHI (18.02.2026)",
+    description: "На фотографии изображено японское слово 「静止」(seishi), которое переводится как «покой», «неподвижность» или «остановка». Это слово передаёт ощущение застывшего момента — когда время, движение и шум замедляются до полной остановки, оставляя только чистую, неподвижную тишину.",
+    imageUrl: "arts/SEISHI (18.02.2026).jpg",
+    tags: ["японские иероглифы", "покой", "фотография", "неподвижность"],
     fileDetails: {
       format: "JPEG",
       dimensions: "3000x3000"
@@ -428,28 +444,128 @@ const TagFilterModule = {
   }
 };
 
-// --- МОДУЛЬ УВЕЛИЧЕНИЯ ИЗОБРАЖЕНИЯ ---
+// --- МОДУЛЬ УВЕЛИЧЕНИЯ ИЗОБРАЖЕНИЯ (улучшенный) ---
 const ZoomModule = {
+  // Переменные для состояния зума и панорамирования
+  scale: 1,
+  offsetX: 0,
+  offsetY: 0,
+  isDragging: false,
+  dragStartX: 0,
+  dragStartY: 0,
+
+  // Показать увеличенное изображение
   showZoom(imageSrc) {
     zoomImage.src = imageSrc;
+    this.resetTransform(); // Сброс при открытии
     zoomOverlay.classList.add('visible');
     document.body.style.overflow = 'hidden'; // Предотвращаем прокрутку фона
   },
 
+  // Скрыть увеличенное изображение
   hideZoom() {
     zoomOverlay.classList.remove('visible');
+    this.resetTransform(); // Сброс при закрытии
     document.body.style.overflow = ''; // Восстанавливаем прокрутку
   },
 
+  // Сброс масштаба и позиции
+  resetTransform() {
+    this.scale = 1;
+    this.offsetX = 0;
+    this.offsetY = 0;
+    this.applyTransform();
+  },
+
+  // Применить текущие трансформации к изображению
+  applyTransform() {
+    zoomImage.style.transform = `scale(${this.scale}) translate(${this.offsetX}px, ${this.offsetY}px)`;
+  },
+
+  // Увеличить
+  zoomIn() {
+    this.scale *= 1.1; // Увеличиваем масштаб на 10%
+    this.applyTransform();
+  },
+
+  // Уменьшить
+  zoomOut() {
+    this.scale /= 1.1; // Уменьшаем масштаб на ~9.1%
+    if (this.scale < 0.1) this.scale = 0.1; // Минимальный масштаб
+    this.applyTransform();
+  },
+
+  // Начало перетаскивания
+  startDrag(e) {
+    this.isDragging = true;
+    // Координаты начала перетаскивания относительно изображения
+    this.dragStartX = e.clientX - this.offsetX;
+    this.dragStartY = e.clientY - this.offsetY;
+    zoomImage.classList.add('grabbing');
+  },
+
+  // Процесс перетаскивания
+  drag(e) {
+    if (!this.isDragging) return;
+    // Вычисляем смещение
+    this.offsetX = e.clientX - this.dragStartX;
+    this.offsetY = e.clientY - this.dragStartY;
+    this.applyTransform();
+  },
+
+  // Конец перетаскивания
+  stopDrag() {
+    this.isDragging = false;
+    zoomImage.classList.remove('grabbing');
+  },
+
+  // Обработка колеса мыши для зума
+  handleWheel(e) {
+    e.preventDefault(); // Предотвращаем прокрутку страницы
+    const rect = zoomImage.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+
+    // Запоминаем текущие смещения
+    const oldOffsetX = this.offsetX;
+    const oldOffsetY = this.offsetY;
+
+    // Вычисляем смещения относительно центра изображения до зума
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const relXBefore = mouseX - centerX;
+    const relYBefore = mouseY - centerY;
+
+    // Применяем зум
+    if (e.deltaY < 0) {
+      this.scale *= 1.1; // Увеличение
+    } else {
+      this.scale /= 1.1; // Уменьшение
+    }
+    if (this.scale < 0.1) this.scale = 0.1; // Минимальный масштаб
+    if (this.scale > 5) this.scale = 5; // Максимальный масштаб
+
+    // Вычисляем смещения после зума
+    const relXAfter = relXBefore * (this.scale / (this.scale / (e.deltaY < 0 ? 1.1 : 1 / 1.1)));
+    const relYAfter = relYBefore * (this.scale / (this.scale / (e.deltaY < 0 ? 1.1 : 1 / 1.1)));
+
+    // Обновляем глобальные смещения
+    this.offsetX = oldOffsetX - (relXAfter - relXBefore);
+    this.offsetY = oldOffsetY - (relYAfter - relYBefore);
+
+    this.applyTransform();
+  },
+
+  // Инициализация обработчиков событий
   initializeEventListeners() {
-    // Открытие при клике на изображение
+    // Открытие при клике на основное изображение
     mainArtImage.addEventListener('click', () => {
       if (mainArtImage.src && mainArtImage.src !== 'about:blank' && !mainArtImage.src.includes('undefined')) {
         this.showZoom(mainArtImage.src);
       }
     });
 
-    // Закрытие при клике на оверлей
+    // Закрытие при клике на оверлей (но не на кнопки управления)
     zoomOverlay.addEventListener('click', (e) => {
       if (e.target === zoomOverlay) {
         this.hideZoom();
@@ -461,6 +577,24 @@ const ZoomModule = {
       if (e.key === 'Escape' && zoomOverlay.classList.contains('visible')) {
         this.hideZoom();
       }
+    });
+
+    // --- НОВОЕ: Обработчики для кнопок зума ---
+    zoomInBtn.addEventListener('click', () => this.zoomIn());
+    zoomOutBtn.addEventListener('click', () => this.zoomOut());
+    zoomResetBtn.addEventListener('click', () => this.resetTransform());
+
+    // --- НОВОЕ: Обработчики для панорамирования и зума колесом ---
+    zoomImage.addEventListener('mousedown', (e) => this.startDrag(e));
+    document.addEventListener('mousemove', (e) => this.drag(e));
+    document.addEventListener('mouseup', () => this.stopDrag());
+    zoomImage.addEventListener('wheel', (e) => this.handleWheel(e));
+
+    // --- НОВОЕ: Предотвращение двойного клика для увеличения ---
+    zoomImage.addEventListener('dblclick', (e) => {
+        e.preventDefault();
+        // Дополнительно можно реализовать двойной клик как зум/сброс
+        // this.scale > 1 ? this.resetTransform() : this.zoomIn();
     });
   }
 };
@@ -574,6 +708,9 @@ const DisplayModule = {
     // Обновлённый формат отображения с количеством результатов
     currentIndexDisplay.textContent = `${index + 1} из ${filteredData.length} (найдено: ${filteredData.length}/${galleryData.length})`;
     currentIndex = index;
+
+    // --- НОВОЕ: Добавить арт в историю просмотров ---
+    HistoryModule.add(art);
   },
 
   updateTags(tags) {
@@ -649,6 +786,9 @@ const DisplayModule = {
       });
       artList.appendChild(li);
     });
+
+    // --- НОВОЕ: обновляем сетку карточек ---
+    GridModule.render();
   },
 
   scrollToCurrentArt() {
@@ -706,6 +846,135 @@ const DynamicImageModule = {
   }
 };
 */
+
+// --- НОВЫЙ МОДУЛЬ: СЕТКА КАРТОЧЕК АРТОВ ---
+const GridModule = {
+  render() {
+    // Очищаем сетку перед рендерингом
+    artGrid.innerHTML = '';
+
+    filteredData.forEach((art, indexInFiltered) => {
+      const card = document.createElement('div');
+      card.className = 'art-card';
+      card.dataset.index = indexInFiltered; // Сохраняем индекс в отфильтрованном массиве
+
+      card.innerHTML = `
+        <img src="${art.imageUrl}" alt="${art.title}">
+        <div class="art-card-info">
+          <p class="art-card-title">${art.title}</p>
+          <div class="art-card-tags">
+            ${art.tags.map(tag => `<span class="art-card-tag">${tag}</span>`).join('')}
+          </div>
+        </div>
+      `;
+
+      // Добавляем обработчик клика: показать арт в основном окне
+      card.addEventListener('click', () => {
+         DisplayModule.updateDisplay(indexInFiltered);
+         DisplayModule.scrollToCurrentArt(); // Опционально: проскроллить к списку
+      });
+
+      artGrid.appendChild(card);
+    });
+  }
+};
+
+// --- НОВЫЙ МОДУЛЬ: ИСТОРИЯ ПРОСМОТРОВ ---
+const HistoryModule = {
+  MAX_HISTORY_LENGTH: 10, // Максимальное количество элементов в истории
+  HISTORY_KEY: 'drcjp_view_history', // Ключ для localStorage
+
+  // Загрузить историю из localStorage
+  loadHistory() {
+    try {
+      const stored = localStorage.getItem(this.HISTORY_KEY);
+      if (stored) {
+        return JSON.parse(stored);
+      }
+    } catch (e) {
+      console.warn('Ошибка при загрузке истории просмотров из localStorage:', e);
+    }
+    return []; // Возвращаем пустой массив, если нет сохранённых данных или ошибка
+  },
+
+  // Сохранить историю в localStorage
+  saveHistory(history) {
+    try {
+      localStorage.setItem(this.HISTORY_KEY, JSON.stringify(history));
+    } catch (e) {
+      console.warn('Ошибка при сохранении истории просмотров в localStorage:', e);
+    }
+  },
+
+  // Добавить арт в историю
+  add(art) {
+    let history = this.loadHistory();
+    // Удаляем старую запись об этом арте, если она есть (чтобы не дублировалась)
+    history = history.filter(item => item.id !== art.id);
+    // Добавляем новый арт в начало массива
+    history.unshift({ id: art.id, title: art.title, imageUrl: art.imageUrl });
+    // Ограничиваем длину истории
+    history = history.slice(0, this.MAX_HISTORY_LENGTH);
+    // Сохраняем обновлённую историю
+    this.saveHistory(history);
+    // Обновляем отображение
+    this.render();
+  },
+
+  // Отрисовать историю на странице
+  render() {
+    const history = this.loadHistory();
+    historyGrid.innerHTML = ''; // Очищаем контейнер
+
+    if (history.length === 0) {
+      // historyGrid.innerHTML = '<p>История пуста.</p>'; // Опционально: сообщение если пусто
+      return; // Просто выходим, если пусто
+    }
+
+    history.forEach(art => {
+      const card = document.createElement('div');
+      card.className = 'history-card';
+      card.dataset.id = art.id; // Сохраняем ID арта для обработки клика
+
+      card.innerHTML = `
+        <img src="${art.imageUrl}" alt="${art.title}">
+        <p class="history-card-title">${art.title}</p>
+      `;
+
+      // Обработчик клика: найти индекс в galleryData и отобразить
+      card.addEventListener('click', () => {
+        const indexInGallery = galleryData.findIndex(item => item.id == art.id); // == для сравнения строки и числа
+        if (indexInGallery !== -1) {
+          // Найти индекс в текущем filteredData
+          const indexInFiltered = filteredData.findIndex(item => item.id == art.id);
+          if (indexInFiltered !== -1) {
+             DisplayModule.updateDisplay(indexInFiltered);
+             DisplayModule.scrollToCurrentArt(); // Опционально: проскроллить к списку
+          } else {
+              // Арт есть в галерее, но не в отфильтрованном списке.
+              // Нужно сбросить фильтр и перейти.
+              SearchModule.clearFilter();
+              setTimeout(() => { // Небольшая задержка, чтобы фильтр сбросился
+                  const newIndexInFiltered = filteredData.findIndex(item => item.id == art.id);
+                  if (newIndexInFiltered !== -1) {
+                      DisplayModule.updateDisplay(newIndexInFiltered);
+                      DisplayModule.scrollToCurrentArt();
+                  }
+              }, 100);
+          }
+        }
+      });
+
+      historyGrid.appendChild(card);
+    });
+  },
+
+  // Очистить историю
+  clear() {
+    this.saveHistory([]);
+    this.render();
+  }
+};
 
 // --- МОДУЛЬ ОБРАТНОГО ОТСЧЁТА ---
 const CountdownModule = {
@@ -892,13 +1161,16 @@ function initGallery() {
     SearchModule.filterAndSortData(savedState.query || '', savedState.filterType || 'all', savedState.sortType || 'default');
   } else {
     // Если нет сохранённого состояния, используем обычную инициализацию
-    DisplayModule.updateArtList();
+    DisplayModule.updateArtList(); // <--- Здесь вызывается и список, и сетка
     DisplayModule.updateDisplay(currentIndex);
   }
 
   // --- НОВОЕ ---
   initPromoVisibility();
   CountdownModule.start();
+
+  // --- НОВОЕ: отрисовать историю при загрузке ---
+  HistoryModule.render();
 }
 
 initGallery();
